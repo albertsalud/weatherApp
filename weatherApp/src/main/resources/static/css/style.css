@@ -1,0 +1,108 @@
+body {
+/*	margin:0px;*/
+/*	height: 100vh;*/
+/*	background: linear-gradient(rgb(69, 156, 235),rgb(69, 156, 235), lightblue, yellow);*/
+/*	transition: background 3s ease, color 1.5s linear;*/
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.canvas {
+	min-height: 100%;
+}
+
+.gradient-canvas {
+	position: absolute;
+	min-width: 100%;
+	z-index: -1;
+	height: 115vh;
+}
+
+.sunny-moon {
+	background:linear-gradient(rgb(0, 0, 160),rgb(38, 38, 255));
+}
+
+.cloudy-moon {
+	background:linear-gradient( rgb(0, 0, 77), rgb(0, 0, 160));
+}
+
+.rainy-moon {
+	background:linear-gradient(grey, lightgrey);
+}
+
+.lighting-moon {
+	background:linear-gradient(grey, grey);
+}
+
+.sunny {
+	background:linear-gradient(rgb(69, 156, 235),rgb(69, 156, 235), lightblue, yellow);
+}
+
+.cloudy {
+	background:linear-gradient( lightgrey, lightblue,rgb(69, 156, 235));
+}
+
+.rainy {
+	background:linear-gradient(grey, lightgrey);
+}
+
+.lighting {
+	background:linear-gradient(grey, grey);
+}
+
+
+.weather-icon {
+	width: 30px;
+}
+
+/*#current-weather-image {*/
+/*	position: relative;*/
+/*	top: 70px;*/
+/*	left: 70px;*/
+/*	width: 500px;*/
+/*}*/
+
+#current-weather-image img {
+/*	width: 450px;*/
+}
+
+#introduction {
+/*	position: absolute;*/
+/*	float: right;*/
+/*	right: 0;*/
+/*	top: 300px;*/
+/*	width: 55%;*/
+	transition: color 2s linear;
+}
+
+#queue-bar {
+	position: fixed;
+    float: right;
+    right: 30px;
+    bottom: 30px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+#queue-bar ul {
+	list-style-type: none;
+	overflow: hidden;
+	padding: 0;
+	margin: 5px;
+	float: right;
+	position: relative;
+}
+
+#queue-bar li {
+	display: block;
+	float:left;
+	padding: 5px;
+}
+
+
+#timer {
+  display: block;
+  float: left;
+  padding: 10px;
+  font-size: 1.2em;
+  color: black;
+}
