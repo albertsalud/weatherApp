@@ -37,7 +37,7 @@
 			<div id="timer"></div>
 			<ul id="queued-weather">
 				<li th:each="weather:${queuedWeather}">
-					<img class="weather-icon" th:src="${weather + '_icon.png'}" />
+					<img class="weather-icon" th:src="${weather.toString().toLowerCase() + '_icon.png'}" />
 				</li>
 			</ul>	
 		</div>
@@ -53,40 +53,7 @@
 	$(".lighting").hide();
 	$(".lighting-moon").hide();
 	
-	
-	var intervalId;
-	var currentSkyline;
-	var currentImage;
-	var defaultTimerDurationInSeconds = 59; //299;	// Adjustet to 4'59"
-	
-    if (!!window.EventSource) {
-        var eventSource = new EventSource("/events/stateChanges");
-
-        eventSource.onmessage = function (e) {
-            var message = JSON.parse(e.data);
-			console.log(message);	
-			changeSkyline(message.nextWeatherState.toLowerCase(), message.day);
-			changeStateBar(message.newWeatherState.toLowerCase());
-			changeImage(message.nextWeatherState, message.day);
-			
-        };
-
-        eventSource.onerror = function (e) {
-            if (e.readyState === EventSource.CONNECTING) {
-                console.log('event: CONNECTING');
-            } else if (e.readyState === EventSource.OPEN) {
-                console.log('event: OPEN');
-            } else if (e.readyState === EventSource.CLOSING) {
-                console.log('event: CLOSING');
-            } else if (e.readyState === EventSource.CLOSED) {
-                console.log('event: CLOSED');
-            }
-        };
-		
-    } else {
-        alert('The browser does not support Server-Sent Events');
-    }
-	
+	var intervalId;	
 	async function changeSkyline(state, isDay) {
 		var newSkyline = state + (isDay ? "" : "-moon");
 		if(currentSkyline === newSkyline) {
@@ -99,7 +66,7 @@
 		currentSkyline = newSkyline;
 		
 	}
-	
+
 	async function changeImage(state, isDay) {
 		var imageName = state + (isDay ? "" : "_MOON");
 		if(currentImage === imageName) {
@@ -113,20 +80,19 @@
 			image.fadeIn("slow");	
 		});
 	}
-	
+
 	async function changeStateBar(state) {
 		$("#queued-weather li").first().remove();
 		$("#queued-weather").append("<li><img class='weather-icon' src='" + state + "_icon.png' /img></li>");
 		restartCountdown(defaultTimerDurationInSeconds);
 	}
-	
+
 	async function restartCountdown(duration) {
 		if(intervalId !== undefined) clearInterval(intervalId);
 		
 		var minutes;
 		var seconds;
 		var timer = duration;
-		console.log("timer", timer);
 		intervalId = setInterval(function () {
 		    minutes = parseInt(timer / 60, 10);
 		    seconds = parseInt(timer % 60, 10);
@@ -154,7 +120,42 @@
 
     var timeToNextChange = /*[[${timeToNextChange}]]*/ 300;
     restartCountdown(timeToNextChange);
+	
+	var serverEventUrl = /*[[@{/events/stateChanges}]]*/ "/url";
 
 /*]]>*/
+</script>
+<script type="application/javascript">
+	var currentSkyline;
+	var currentImage;
+	var defaultTimerDurationInSeconds = 59; //299;	// Adjustet to 4'59"
+	
+    if (!!window.EventSource) {
+        var eventSource = new EventSource(serverEventUrl);
+
+        eventSource.onmessage = function (e) {
+            var message = JSON.parse(e.data);
+			changeSkyline(message.nextWeatherState.toLowerCase(), message.day);
+			changeStateBar(message.newWeatherState.toLowerCase());
+			changeImage(message.nextWeatherState, message.day);
+			
+        };
+
+        eventSource.onerror = function (e) {
+            if (e.readyState === EventSource.CONNECTING) {
+                console.log('event: CONNECTING');
+            } else if (e.readyState === EventSource.OPEN) {
+                console.log('event: OPEN');
+            } else if (e.readyState === EventSource.CLOSING) {
+                console.log('event: CLOSING');
+            } else if (e.readyState === EventSource.CLOSED) {
+                console.log('event: CLOSED');
+            }
+        };
+		
+    } else {
+        alert('The browser does not support Server-Sent Events');
+    }
+	
 </script>
 </html>
