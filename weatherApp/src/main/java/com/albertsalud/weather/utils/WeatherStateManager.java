@@ -13,18 +13,30 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class WeatherStateManager {
+	private static final int QUEUE_CAPACITY = 3;
 	
 	private Queue<WeatherStateEnum> weatherQueue = new ConcurrentLinkedQueue<>();
 	private WeatherStateEnum currentState;
+	
+	private final WeatherStateRandomGenerator weatherGenerator;
+	
+	public WeatherStateManager(WeatherStateRandomGenerator weatherGenerator) {
+		this.weatherGenerator = weatherGenerator;
+		
+		this.initQueue();
+	}
 	
 	public WeatherStateEnum getNextState() {
 		this.currentState = this.weatherQueue.poll();	
 		return this.currentState;
 	}
 	
-	public void addState(WeatherStateEnum newState) {
+	public WeatherStateEnum addState() {
+		WeatherStateEnum newState = this.weatherGenerator.generateWeatherState();
 		log.info("Adding weather state: {}", newState);
 		this.weatherQueue.add(newState);
+		
+		return newState;
 	}
 	
 	public Iterator<WeatherStateEnum> getQueueValues() {
@@ -33,6 +45,13 @@ public class WeatherStateManager {
 
 	public WeatherStateEnum getCurrentState() {
 		return this.currentState;
+	}
+	
+	private void initQueue() {
+		for(int i = 0; i <= QUEUE_CAPACITY; i++) {
+			this.addState();
+		}
+		this.getNextState();
 	}
 
 }
